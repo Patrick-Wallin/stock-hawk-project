@@ -37,4 +37,6 @@
     <string name="title_pager_summary">Summary</string>
     <string name="title_pager_historical">Historical</string>
     <string name="title_pager_news">News</string>
+
+    <string name="title_widget_today">Stock Prices</string>
 </resources>

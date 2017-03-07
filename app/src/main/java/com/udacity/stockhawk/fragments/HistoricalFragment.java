@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -37,6 +38,9 @@ public class HistoricalFragment extends Fragment {
         Bundle args = getArguments();
         if(args != null) {
             LineChart lineChart = (LineChart) rootView.findViewById(R.id.historical_line_chart);
+            Description desc = new Description();
+            desc.setText("");
+            lineChart.setDescription(desc);
 
             List<Entry> values = new ArrayList<>();
 
@@ -46,27 +50,34 @@ public class HistoricalFragment extends Fragment {
             if(historyHashMap != null && !historyHashMap.isEmpty()) {
                 Iterator it = historyHashMap.entrySet().iterator();
                 int xAxisLineNumber = 0;
+                int ix = 0;
                 while (it.hasNext()) {
-                    Map.Entry pair = (Map.Entry)it.next();
-
-                    Date date = new Date(Long.valueOf(pair.getKey().toString()).longValue());
-                    float price = Float.valueOf(pair.getValue().toString()).floatValue();
-
-                    //chartXAxisLine.add(date.toString());
-
-                    Entry stockData = new Entry(xAxisLineNumber++,price);
-                    values.add(stockData);
+                    if((xAxisLineNumber%4) == 0) {
+                        Map.Entry pair = (Map.Entry) it.next();
 
 
+                        Date date = new Date(Long.valueOf(pair.getKey().toString()).longValue());
+                        float price = Float.valueOf(pair.getValue().toString()).floatValue();
 
-                    //System.out.println(pair.getKey() + " = " + pair.getValue());
-                    //it.remove(); // avoids a ConcurrentModificationException
+                        //chartXAxisLine.add(date.toString());
+
+                        Entry stockData = new Entry(ix++, price);
+                        values.add(stockData);
+
+                        //System.out.println(pair.getKey() + " = " + pair.getValue());
+                        //it.remove(); // avoids a ConcurrentModificationException
+                    }
+                    xAxisLineNumber++;
+                    if(ix > 12)
+                        break;
                 }
             }
+
 
             LineDataSet setStock = new LineDataSet(values, "Test this stock");
 
             LineData data = new LineData(setStock);
+
             lineChart.setData(data);
             lineChart.invalidate();
         }

@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.MainActivity">
+        <activity
+            android:theme="@style/AppTheme.Main"
+            android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,6 +34,18 @@
             android:authorities="com.udacity.stockhawk"
             android:exported="false" />
 
+        <receiver android:name=".widget.TodayWidgetProvider"
+            android:enabled="true"
+            android:label="@string/title_widget_today">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.udacity.stockhawk.app.ACTION_DATA_UPDATED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/stock_widget_today" />
+        </receiver>
+
         <service
             android:name=".sync.QuoteJobService"
             android:enabled="true"
@@ -40,6 +54,7 @@
 
         <activity
             android:name=".ui.DetailActivity"
+            android:theme="@style/AppTheme.Details"
             android:parentActivityName=".ui.MainActivity">
 
         </activity>

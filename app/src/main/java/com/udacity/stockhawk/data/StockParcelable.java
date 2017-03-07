@@ -14,6 +14,7 @@ import yahoofinance.quotes.stock.StockQuote;
  */
 
 public class StockParcelable implements Parcelable {
+    private String mSymbol;
     private String mPreviousClose;
     private String mOpen;
     private String mBid;
@@ -29,6 +30,7 @@ public class StockParcelable implements Parcelable {
     private HashMap<String,String> mHistory;
 
     public StockParcelable(Cursor cursor) {
+        int symbolColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_SYMBOL);
         int previousCloseColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_PREVIOUS_CLOSE);
         int openColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_OPEN);
         int bidColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_BID);
@@ -45,6 +47,7 @@ public class StockParcelable implements Parcelable {
         int dividendColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_DIVIDEND);
         int historyColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_HISTORY);
 
+        mSymbol = cursor.getString(symbolColumn);
         mPreviousClose = String.format("%.2f",cursor.getFloat(previousCloseColumn));
         mOpen = String.format("%.2f",cursor.getFloat(openColumn));
         mBid = String.format("%.2f",cursor.getFloat(bidColumn));
@@ -76,6 +79,7 @@ public class StockParcelable implements Parcelable {
     }
 
     protected StockParcelable(Parcel in) {
+        mSymbol = in.readString();
         mPreviousClose = in.readString();
         mOpen = in.readString();
         mBid = in.readString();
@@ -91,6 +95,7 @@ public class StockParcelable implements Parcelable {
         mHistory = in.readHashMap(Float.class.getClassLoader());
     }
 
+    public String getSymbol() { return mSymbol; }
     public String getPreviousClose() {
         return mPreviousClose;
     }
@@ -111,6 +116,7 @@ public class StockParcelable implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mSymbol);
         dest.writeString(mPreviousClose);
         dest.writeString(mOpen);
         dest.writeString(mBid);

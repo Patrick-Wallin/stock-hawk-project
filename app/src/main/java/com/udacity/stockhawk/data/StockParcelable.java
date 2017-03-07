@@ -15,6 +15,8 @@ import yahoofinance.quotes.stock.StockQuote;
 
 public class StockParcelable implements Parcelable {
     private String mSymbol;
+    private String mAbsoluteChange;
+    private String mPercentageChange;
     private String mPreviousClose;
     private String mOpen;
     private String mBid;
@@ -31,6 +33,8 @@ public class StockParcelable implements Parcelable {
 
     public StockParcelable(Cursor cursor) {
         int symbolColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_SYMBOL);
+        int absoluteChangeColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_ABSOLUTE_CHANGE);
+        int percentageChangeColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_PERCENTAGE_CHANGE);
         int previousCloseColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_PREVIOUS_CLOSE);
         int openColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_OPEN);
         int bidColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_BID);
@@ -48,6 +52,8 @@ public class StockParcelable implements Parcelable {
         int historyColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_HISTORY);
 
         mSymbol = cursor.getString(symbolColumn);
+        mAbsoluteChange =String.format("%.2f", cursor.getFloat(absoluteChangeColumn));
+        mPercentageChange = String.format("%.2f", cursor.getFloat(percentageChangeColumn));
         mPreviousClose = String.format("%.2f",cursor.getFloat(previousCloseColumn));
         mOpen = String.format("%.2f",cursor.getFloat(openColumn));
         mBid = String.format("%.2f",cursor.getFloat(bidColumn));
@@ -80,6 +86,8 @@ public class StockParcelable implements Parcelable {
 
     protected StockParcelable(Parcel in) {
         mSymbol = in.readString();
+        mAbsoluteChange = in.readString();
+        mPercentageChange = in.readString();
         mPreviousClose = in.readString();
         mOpen = in.readString();
         mBid = in.readString();
@@ -96,6 +104,8 @@ public class StockParcelable implements Parcelable {
     }
 
     public String getSymbol() { return mSymbol; }
+    public String getAbsoluteChange() { return mAbsoluteChange; }
+    public String getPercentageChange() { return mPercentageChange; }
     public String getPreviousClose() {
         return mPreviousClose;
     }
@@ -117,6 +127,8 @@ public class StockParcelable implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mSymbol);
+        dest.writeString(mAbsoluteChange);
+        dest.writeString(mPercentageChange);
         dest.writeString(mPreviousClose);
         dest.writeString(mOpen);
         dest.writeString(mBid);

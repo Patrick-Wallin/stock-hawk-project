@@ -2,6 +2,7 @@ package com.udacity.stockhawk.widget;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Binder;
 import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -52,24 +53,14 @@ public class StockWidgetRemoteViewsFactory implements RemoteViewsService.RemoteV
         }
 
         String[] projection = new String[]{
-                Contract.Quote._ID, Contract.Quote.COLUMN_SYMBOL, Contract.Quote.COLUMN_PRICE
+                Contract.Quote._ID, Contract.Quote.COLUMN_SYMBOL, Contract.Quote.COLUMN_BID
                 , Contract.Quote.COLUMN_ABSOLUTE_CHANGE, Contract.Quote.COLUMN_PERCENTAGE_CHANGE };
+
+        final long identityToken = Binder.clearCallingIdentity();
 
         mStockData = mContext.getContentResolver().query(Contract.Quote.getContentUri(),projection,null,null,null);
 
-        /*
-        final long identityToken = Binder.clearCallingIdentity();
-
-        data = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
-                new String[]{QuoteColumns._ID, QuoteColumns.SYMBOL, QuoteColumns.BIDPRICE,
-                        QuoteColumns.PERCENT_CHANGE, QuoteColumns.CHANGE, QuoteColumns.ISUP},
-                QuoteColumns.ISCURRENT + " = ?",
-                new String[]{"1"},
-                null);
-
-
         Binder.restoreCallingIdentity(identityToken);
-        */
     }
 
     @Override

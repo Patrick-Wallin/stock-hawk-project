@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.udacity.stockhawk.R;
@@ -29,7 +30,7 @@ public class TodayWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-
+        Log.i("onupdate","todaywidgetprovider");
         for(int appWidgetId : appWidgetIds) {
 
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.stock_widget);

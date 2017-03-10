@@ -51,33 +51,49 @@ public class StockParcelable implements Parcelable {
         int dividendColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_DIVIDEND);
         int historyColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_HISTORY);
 
-        mSymbol = cursor.getString(symbolColumn);
-        mAbsoluteChange =String.format("%.2f", cursor.getFloat(absoluteChangeColumn));
-        mPercentageChange = String.format("%.2f", cursor.getFloat(percentageChangeColumn));
-        mPreviousClose = String.format("%.2f",cursor.getFloat(previousCloseColumn));
-        mOpen = String.format("%.2f",cursor.getFloat(openColumn));
-        mBid = String.format("%.2f",cursor.getFloat(bidColumn));
-        mAsk = String.format("%.2f",cursor.getFloat(askColumn));
-        mDayRange = String.format("%.2f -  %.2f",cursor.getFloat(dayLowColumn),cursor.getFloat(dayHighColumn));
-        mYearRange = String.format("%.2f -  %.2f",cursor.getFloat(yearLowColumn),cursor.getFloat(yearHighColumn));
-        mVolume = String.format("%d",cursor.getInt(volumeColumn));
-        mAvgVolume = String.format("%d",cursor.getInt(avgVolumeColumn));
-        mMarketCap = String.format("%.2f",cursor.getFloat(marketCapColumn));
+        if(symbolColumn >= 0)
+            mSymbol = cursor.getString(symbolColumn);
+        if(absoluteChangeColumn >= 0)
+            mAbsoluteChange =String.format("%.2f", cursor.getFloat(absoluteChangeColumn));
+        if(percentageChangeColumn >= 0)
+            mPercentageChange = String.format("%.2f", cursor.getFloat(percentageChangeColumn));
+        if(previousCloseColumn >= 0)
+            mPreviousClose = String.format("%.2f",cursor.getFloat(previousCloseColumn));
+        if(openColumn >= 0)
+            mOpen = String.format("%.2f",cursor.getFloat(openColumn));
+        if(bidColumn >= 0)
+            mBid = String.format("%.2f",cursor.getFloat(bidColumn));
+        if(askColumn >= 0)
+            mAsk = String.format("%.2f",cursor.getFloat(askColumn));
+        if(dayHighColumn >= 0)
+            mDayRange = String.format("%.2f -  %.2f",cursor.getFloat(dayLowColumn),cursor.getFloat(dayHighColumn));
+        if(yearHighColumn >= 0)
+            mYearRange = String.format("%.2f -  %.2f",cursor.getFloat(yearLowColumn),cursor.getFloat(yearHighColumn));
+        if(volumeColumn >= 0)
+            mVolume = String.format("%d",cursor.getInt(volumeColumn));
+        if(avgVolumeColumn >= 0)
+            mAvgVolume = String.format("%d",cursor.getInt(avgVolumeColumn));
+        if(marketCapColumn >= 0)
+            mMarketCap = String.format("%.2f",cursor.getFloat(marketCapColumn));
 //        mPE = String.format("%.2f",cursor.getFloat(peColumn));
-        mEPS = String.format("%.2f",cursor.getFloat(epsColumn));
-        mDividend = String.format("%.2f",cursor.getFloat(dividendColumn));
+        if(epsColumn >= 0)
+            mEPS = String.format("%.2f",cursor.getFloat(epsColumn));
+        if(dividendColumn >= 0)
+            mDividend = String.format("%.2f",cursor.getFloat(dividendColumn));
 
         mHistory = new HashMap<String,String>();
 
-        String history = cursor.getString(historyColumn).trim();
-        if(!history.isEmpty()) {
-            String[] historyData = history.split("\\n");
-            if(historyData.length > 0) {
-                for(int i = 0; i < historyData.length; i++) {
-                    String[] lineData = historyData[i].split(",");
-                    if(!mHistory.containsKey(lineData[0].trim())) {
-                        Log.i("Date",lineData[0].trim());
-                        mHistory.put(lineData[0].trim(),lineData[1].trim());
+        if(historyColumn >= 0) {
+            String history = cursor.getString(historyColumn).trim();
+            if (!history.isEmpty()) {
+                String[] historyData = history.split("\\n");
+                if (historyData.length > 0) {
+                    for (int i = 0; i < historyData.length; i++) {
+                        String[] lineData = historyData[i].split(",");
+                        if (!mHistory.containsKey(lineData[0].trim())) {
+                            Log.i("Date", lineData[0].trim());
+                            mHistory.put(lineData[0].trim(), lineData[1].trim());
+                        }
                     }
                 }
             }

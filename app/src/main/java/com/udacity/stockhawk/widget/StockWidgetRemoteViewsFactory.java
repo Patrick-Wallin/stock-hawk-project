@@ -3,6 +3,7 @@ package com.udacity.stockhawk.widget;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Binder;
+import android.util.Log;
 import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -32,6 +33,7 @@ public class StockWidgetRemoteViewsFactory implements RemoteViewsService.RemoteV
     public StockWidgetRemoteViewsFactory(Context context) {
         mContext = context;
 
+        Log.i("SWRVFactory","Constructor");
         dollarFormat = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.US);
         dollarFormatWithPlus = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.US);
         dollarFormatWithPlus.setPositivePrefix("+$");
@@ -43,24 +45,28 @@ public class StockWidgetRemoteViewsFactory implements RemoteViewsService.RemoteV
 
     @Override
     public void onCreate() {
-
+        Log.i("RemoteViewsFactory","onCreate");
     }
 
     @Override
     public void onDataSetChanged() {
+        Log.i("RemoteViewsFactory","onDataSetChanged");
         if (mStockData != null) {
             mStockData.close();
         }
 
+        Log.i("RemoteViewsFactory","onDataSetChanged - 1");
         String[] projection = new String[]{
                 Contract.Quote._ID, Contract.Quote.COLUMN_SYMBOL, Contract.Quote.COLUMN_BID
                 , Contract.Quote.COLUMN_ABSOLUTE_CHANGE, Contract.Quote.COLUMN_PERCENTAGE_CHANGE };
 
         final long identityToken = Binder.clearCallingIdentity();
 
+        Log.i("RemoteViewsFactory","onDataSetChanged - 2");
         mStockData = mContext.getContentResolver().query(Contract.Quote.getContentUri(),projection,null,null,null);
-
+        Log.i("RemoteViewsFactory","onDataSetChanged - 3");
         Binder.restoreCallingIdentity(identityToken);
+        Log.i("RemoteViewsFactory",String.valueOf(mStockData.getCount()));
     }
 
     @Override
@@ -78,41 +84,54 @@ public class StockWidgetRemoteViewsFactory implements RemoteViewsService.RemoteV
 
     @Override
     public RemoteViews getViewAt(int position) {
+        Log.i("RemoteViewsFactory","getViewAt");
         if (position == AdapterView.INVALID_POSITION ||
                 mStockData == null || !mStockData.moveToPosition(position)) {
             return null;
         }
 
+
+        Log.i("RemoteViewsFactory",String.valueOf(position));
         RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.stock_widget_list_item);
 
-        StockParcelable stockParcelable = new StockParcelable(mStockData);
+        Log.i("RemoteViewsFactory",String.valueOf(mStockData.getPosition()));
 
+        StockParcelable stockParcelable = new StockParcelable(mStockData);
+        Log.i("RemoteViewsFactory",String.valueOf(position));
         // Bind data to the views
+
         float price = Float.parseFloat(stockParcelable.getBid());
         float absoluteChange = Float.parseFloat(stockParcelable.getAbsoluteChange());
         float percentageChange = Float.parseFloat(stockParcelable.getPercentageChange());
+
+        Log.i("RemoteViewsFactory","step-1");
 
         //float rawAbsoluteChange = cursor.getFloat(Contract.Quote.POSITION_ABSOLUTE_CHANGE);
         //float percentageChange = cursor.getFloat(Contract.Quote.POSITION_PERCENTAGE_CHANGE);
 
         views.setTextViewText(R.id.symbol, stockParcelable.getSymbol());
+
         views.setTextViewText(R.id.price, dollarFormat.format(price));
 
+        Log.i("RemoteViewsFactory","step-2");
+        Log.i("RemoveViewsFactory", String.format("%.2f",absoluteChange));
         if (absoluteChange > 0) {
-            views.setInt(R.id.change, "setBackground", R.drawable.percent_change_pill_green);
+            views.setInt(R.id.change, "setBackgroundResource", R.drawable.percent_change_pill_green);
         } else {
-            views.setInt(R.id.change, "setBackground", R.drawable.percent_change_pill_red);
+            views.setInt(R.id.change, "setBackgroundResource", R.drawable.percent_change_pill_red);
         }
 
         String change = dollarFormatWithPlus.format(absoluteChange);
         String percentage = percentageFormat.format(percentageChange / 100);
 
+        Log.i("RemoteViewsFactory","step-3");
         if (PrefUtils.getDisplayMode(mContext)
                 .equals(mContext.getString(R.string.pref_display_mode_absolute_key))) {
             views.setTextViewText(R.id.change,change);
         } else {
             views.setTextViewText(R.id.change,percentage);
         }
+
 
 
         /*

@@ -61,8 +61,10 @@ public class StockParcelable implements Parcelable {
             mPreviousClose = String.format("%.2f",cursor.getFloat(previousCloseColumn));
         if(openColumn >= 0)
             mOpen = String.format("%.2f",cursor.getFloat(openColumn));
-        if(bidColumn >= 0)
-            mBid = String.format("%.2f",cursor.getFloat(bidColumn));
+        if(bidColumn >= 0) {
+            mBid = String.format("%.2f", cursor.getFloat(bidColumn));
+            Log.i("StockParcelable",mBid);
+        }
         if(askColumn >= 0)
             mAsk = String.format("%.2f",cursor.getFloat(askColumn));
         if(dayHighColumn >= 0)

@@ -26,12 +26,17 @@
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_add">Add</string>
 
+    <string name="header_symbol">Symbol</string>
+    <string name="header_last_price">Last Price</string>
+    <string name="header_change">Change</string>
+
     <string name="error_no_network">No network connectivity! Will load stock cursor when the network is available.</string>
     <string name="error_no_stocks">No stocks added! Hit the floating action button to add one.</string>
+    <string name="error_no_network_new_stock">No network connectivity! Please try again later.</string>
 
     <string name="toast_stock_added_no_connectivity">Symbol %s added. Will refresh when network available.</string>
     <string name="toast_no_connectivity">Will refresh when network available.</string>
-
+    <string name="toast_stock_symbol_invalidated">Symbol %s does not exist.</string>
     <string name="content_description_add_stock">Add a stock</string>
 
     <string name="title_pager_summary">Summary</string>
@@ -39,4 +44,20 @@
     <string name="title_pager_news">News</string>
 
     <string name="title_widget_today">Stock Prices</string>
+
+    <string name="content_description_dollar">Change to dollar</string>
+    <string name="content_description_percentage">Change to percentage</string>
+
+    <string name="summary_previous_close">Previous Close</string>
+    <string name="summary_open">Open</string>
+    <string name="summary_bid">Bid</string>
+    <string name="summary_ask">Ask</string>
+    <string name="summary_day_range">Day\'s Range</string>
+    <string name="summary_52_week_range">52 Week Range</string>
+    <string name="summary_volume">Volume</string>
+    <string name="summary_average_volume">Average Volume</string>
+    <string name="summary_market_cap">Market Cap</string>
+    <string name="summary_pe">PE</string>
+    <string name="summary_eps">EPS</string>
+    <string name="summary_dividend">Dividend</string>
 </resources>

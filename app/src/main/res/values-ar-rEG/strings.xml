@@ -6,11 +6,41 @@
     <string name="dialog_cancel">إلغاء</string>
     <string name="dialog_add">إضافة</string>
 
+    <string name="header_symbol">رمز</string>
+    <string name="header_last_price">السعر الاخير</string>
+    <string name="header_change">يتغيرون</string>
+
+
     <string name="error_no_network">شبكة اتصال! سيتم تحميل المؤشر الأسهم عندما تتوفر الشبكة.</string>
     <string name="error_no_stocks">وأضافت يوجد مخزون! اضغط على زر عمل العائمة لإضافة واحد.</string>
+    <string name="error_no_network_new_stock">No network connectivity! Please try again later.</string>
 
     <string name="toast_stock_added_no_connectivity">وأضاف الرمز٪ الصورة. سيتم تحديث عندما شبكة المتاحة.</string>
     <string name="toast_no_connectivity">سيتم تحديث عندما شبكة المتاحة.</string>
-
+    <string name="toast_stock_symbol_invalidated">Symbol %s does not exist.</string>
     <string name="content_description_add_stock">إضافة الأسهم</string>
+
+    <string name="title_pager_summary">ملخص</string>
+    <string name="title_pager_historical">التاريخ</string>
+    <string name="title_pager_news">أخبار</string>
+
+    <string name="title_widget_today">أسعار الأسهم</string>
+
+    <string name="content_description_dollar">التغيير إلى الدولار</string>
+    <string name="content_description_percentage">التغيير إلى النسبة المئوية</string>
+
+    <string name="summary_previous_close">السابق الإغلاق</string>
+    <string name="summary_open">فتح</string>
+    <string name="summary_bid">المناقصة</string>
+    <string name="summary_ask">يطلب</string>
+    <string name="summary_day_range">نطاق اليوم</string>
+    <string name="summary_52_week_range">52 أسبوع المدى</string>
+    <string name="summary_volume">الصوت</string>
+    <string name="summary_average_volume">متوسط ​​الحجم</string>
+    <string name="summary_market_cap">كابيتال كاب</string>
+    <string name="summary_pe">PE</string>
+    <string name="summary_eps">إبس</string>
+    <string name="summary_dividend">توزيعات ارباح</string>
+
+
 </resources>

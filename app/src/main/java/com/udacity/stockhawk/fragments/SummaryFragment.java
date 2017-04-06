@@ -53,19 +53,20 @@ public class SummaryFragment extends Fragment {
 
         Bundle args = getArguments();
         if(args != null) {
+
             mStockParcelable = args.getParcelable("stock_information");
-            summaryData.add(new String[] { "Previous Close", mStockParcelable.getPreviousClose()});
-            summaryData.add(new String[] { "Open", mStockParcelable.getOpen()});
-            summaryData.add(new String[] { "Bid", mStockParcelable.getBid()});
-            summaryData.add(new String[] { "Ask", mStockParcelable.getAsk()});
-            summaryData.add(new String[] { "Day's Range", mStockParcelable.getDayRange()});
-            summaryData.add(new String[] { "52 Week Range", mStockParcelable.getYearRange()});
-            summaryData.add(new String[] { "Volume", mStockParcelable.getVolume()});
-            summaryData.add(new String[] { "Average Volume", mStockParcelable.getAvgVolume()});
-            summaryData.add(new String[] { "Market Cap", mStockParcelable.getMarketCap()});
-            summaryData.add(new String[] { "PE", mStockParcelable.getPE()});
-            summaryData.add(new String[] { "EPS", mStockParcelable.getEPS()});
-            summaryData.add(new String[] { "Dividend", mStockParcelable.getDividend()});
+            summaryData.add(new String[] { getActivity().getApplicationContext().getString(R.string.summary_previous_close), mStockParcelable.getPreviousClose()});
+            summaryData.add(new String[] { getActivity().getApplicationContext().getString(R.string.summary_open), mStockParcelable.getOpen()});
+            summaryData.add(new String[] { getActivity().getApplicationContext().getString(R.string.summary_bid), mStockParcelable.getBid()});
+            summaryData.add(new String[] { getActivity().getApplicationContext().getString(R.string.summary_ask), mStockParcelable.getAsk()});
+            summaryData.add(new String[] { getActivity().getApplicationContext().getString(R.string.summary_day_range), mStockParcelable.getDayRange()});
+            summaryData.add(new String[] { getActivity().getApplicationContext().getString(R.string.summary_52_week_range), mStockParcelable.getYearRange()});
+            summaryData.add(new String[] { getActivity().getApplicationContext().getString(R.string.summary_volume), mStockParcelable.getVolume()});
+            summaryData.add(new String[] { getActivity().getApplicationContext().getString(R.string.summary_average_volume), mStockParcelable.getAvgVolume()});
+            summaryData.add(new String[] { getActivity().getApplicationContext().getString(R.string.summary_market_cap), mStockParcelable.getMarketCap()});
+            summaryData.add(new String[] { getActivity().getApplicationContext().getString(R.string.summary_pe), mStockParcelable.getPE()});
+            summaryData.add(new String[] { getActivity().getApplicationContext().getString(R.string.summary_eps), mStockParcelable.getEPS()});
+            summaryData.add(new String[] { getActivity().getApplicationContext().getString(R.string.summary_dividend), mStockParcelable.getDividend()});
         }
 
         mAdapter = new SummaryAdapter(summaryData);

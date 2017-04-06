@@ -1,7 +1,9 @@
 package com.udacity.stockhawk.ui;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -14,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -25,13 +28,18 @@ import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.Contract;
 import com.udacity.stockhawk.data.PrefUtils;
 import com.udacity.stockhawk.data.StockParcelable;
+import com.udacity.stockhawk.sync.QuoteIntentService;
 import com.udacity.stockhawk.sync.QuoteSyncJob;
 
+import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
+import yahoofinance.Stock;
+import yahoofinance.YahooFinance;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         SwipeRefreshLayout.OnRefreshListener,
@@ -49,14 +57,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     TextView error;
     private StockAdapter adapter;
 
+    private SymbolValidatedBroadcastReceiver mySymbolValidatedBroadcastReceiver;
+
     @Override
     public void onClick(String symbol, Cursor cursor) {
-        Timber.d("Symbol clicked: %s", symbol);
-        //int previousCloseColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_BID);
-        //Timber.d("BID: %.2f", cursor.getFloat(previousCloseColumn));
-        // Patrick 03/03/2017 - Call Detail Activity
-        //String stock = mCursor.getString(mCursor.getColumnIndex("symbol"));
-        //Log.i("Stock-Hawk",stock);
         StockParcelable sp = new StockParcelable(cursor);
         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
         intent.putExtra("stock_information",sp);
@@ -73,6 +77,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         adapter = new StockAdapter(this, this);
         stockRecyclerView.setAdapter(adapter);
         stockRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        IntentFilter intentFilter = new IntentFilter(QuoteSyncJob.ACTION_SYMBOL_VALIDATED);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+
+        mySymbolValidatedBroadcastReceiver = new SymbolValidatedBroadcastReceiver();
+        registerReceiver(mySymbolValidatedBroadcastReceiver,intentFilter);
 
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setRefreshing(true);
@@ -98,6 +108,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mySymbolValidatedBroadcastReceiver);
+    }
+
     private boolean networkUp() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -108,40 +124,56 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onRefresh() {
 
-        QuoteSyncJob.syncImmediately(this);
-
+        QuoteSyncJob.syncImmediately(this,"");
+        Timber.d("onrefresh checking network");
         if (!networkUp() && adapter.getItemCount() == 0) {
+            Timber.d("second refresh");
             swipeRefreshLayout.setRefreshing(false);
             error.setText(getString(R.string.error_no_network));
             error.setVisibility(View.VISIBLE);
         } else if (!networkUp()) {
+            Timber.d("!networkUp - onrefresh");
             swipeRefreshLayout.setRefreshing(false);
             Toast.makeText(this, R.string.toast_no_connectivity, Toast.LENGTH_LONG).show();
         } else if (PrefUtils.getStocks(this).size() == 0) {
+            Timber.d("getsocks");
             swipeRefreshLayout.setRefreshing(false);
             error.setText(getString(R.string.error_no_stocks));
             error.setVisibility(View.VISIBLE);
         } else {
+            if(!networkUp())
+                Timber.d("it is down!");
             error.setVisibility(View.GONE);
         }
     }
 
     public void button(@SuppressWarnings("UnusedParameters") View view) {
-        new AddStockDialog().show(getFragmentManager(), "StockDialogFragment");
+        if(networkUp()) {
+            new AddStockDialog().show(getFragmentManager(), "StockDialogFragment");
+        }else {
+            String message = getString(R.string.error_no_network_new_stock);
+            Toast.makeText(this,message,Toast.LENGTH_LONG).show();
+        }
     }
 
     void addStock(String symbol) {
         if (symbol != null && !symbol.isEmpty()) {
-
+            if(networkUp()) {
+                QuoteSyncJob.syncImmediately(this, symbol);
+            }else {
+                String message = getString(R.string.error_no_network_new_stock);
+                Toast.makeText(this,message,Toast.LENGTH_LONG).show();
+            }
+            /*
             if (networkUp()) {
                 swipeRefreshLayout.setRefreshing(true);
             } else {
                 String message = getString(R.string.toast_stock_added_no_connectivity, symbol);
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             }
-
             PrefUtils.addStock(this, symbol);
-            QuoteSyncJob.syncImmediately(this);
+            QuoteSyncJob.syncImmediately(this,"");
+            */
         }
     }
 
@@ -156,7 +188,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         swipeRefreshLayout.setRefreshing(false);
-
         if (data.getCount() != 0) {
             error.setVisibility(View.GONE);
         }
@@ -175,8 +206,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (PrefUtils.getDisplayMode(this)
                 .equals(getString(R.string.pref_display_mode_absolute_key))) {
             item.setIcon(R.drawable.ic_percentage);
+            item.setTitle(R.string.content_description_dollar);
         } else {
             item.setIcon(R.drawable.ic_dollar);
+            item.setTitle(R.string.content_description_percentage);
         }
     }
 
@@ -199,5 +232,29 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public class SymbolValidatedBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Timber.d("onReceive!");
+            boolean isSymbolValidated = intent.getBooleanExtra("symbolvalidated",false);
+            String symbol = intent.getStringExtra("symbol");
+            if(isSymbolValidated) {
+                if (networkUp()) {
+                    swipeRefreshLayout.setRefreshing(true);
+                } else {
+                    String message = getString(R.string.toast_stock_added_no_connectivity, symbol);
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                }
+                PrefUtils.addStock(getApplicationContext(), symbol);
+                QuoteSyncJob.syncImmediately(getApplicationContext(), "");
+            }else {
+                String message = getString(R.string.toast_stock_symbol_invalidated, symbol);
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+            }
+
+        }
     }
 }

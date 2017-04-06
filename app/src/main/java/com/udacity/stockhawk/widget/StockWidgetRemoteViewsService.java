@@ -11,7 +11,6 @@ import android.widget.RemoteViewsService;
 public class StockWidgetRemoteViewsService extends RemoteViewsService {
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        Log.i("RemoteViewsFactory","test");
         return new StockWidgetRemoteViewsFactory(this.getApplicationContext());
     }
 }

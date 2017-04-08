@@ -1,6 +1,8 @@
 package com.udacity.stockhawk.widget;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Binder;
 import android.util.Log;
@@ -12,10 +14,13 @@ import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.Contract;
 import com.udacity.stockhawk.data.PrefUtils;
 import com.udacity.stockhawk.data.StockParcelable;
+import com.udacity.stockhawk.ui.MainActivity;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
+
+import static android.R.attr.data;
 
 /**
  * Created by piwal on 3/6/2017.
@@ -87,21 +92,40 @@ public class StockWidgetRemoteViewsFactory implements RemoteViewsService.RemoteV
 
         StockParcelable stockParcelable = new StockParcelable(mStockData);
 
+        NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+
         float price = 0.0f;
         float absoluteChange = 0.0f;
         float percentageChange = 0.0f;
 
+        price = stockParcelable.getBidInFloat();
+        absoluteChange = stockParcelable.getAbsoluteChangeInFloat();
+        percentageChange = stockParcelable.getPercentageChangeInFloat();
+
+        //String price = stockParcelable.getBid();
+        //String absoluteChange = stockParcelable.getAbsoluteChange();
+        //String percentageChange = stockParcelable.getPercentageChange();
+
+
+        /*
         try {
-            price = Float.parseFloat(stockParcelable.getBid());
+            Number parsePrice = nf.parse(stockParcelable.getBid());
+            //price = Float.parseFloat(stockParcelable.getBid());
+            price = parsePrice.floatValue();
         }catch(Exception e) {}
 
         try {
-            absoluteChange = Float.parseFloat(stockParcelable.getAbsoluteChange());
+            Number parseAbsolutePrice = nf.parse(stockParcelable.getAbsoluteChange());
+            //absoluteChange = Float.parseFloat(stockParcelable.getAbsoluteChange());
+            absoluteChange = parseAbsolutePrice.floatValue();
         }catch(Exception e) {}
 
         try {
-            percentageChange = Float.parseFloat(stockParcelable.getPercentageChange());
+            Number parsePercentageChange = nf.parse(stockParcelable.getPercentageChange());
+            //percentageChange = Float.parseFloat(stockParcelable.getPercentageChange());
+            percentageChange = parsePercentageChange.floatValue();
         }catch(Exception e) {}
+        */
 
         //float rawAbsoluteChange = cursor.getFloat(Contract.Quote.POSITION_ABSOLUTE_CHANGE);
         //float percentageChange = cursor.getFloat(Contract.Quote.POSITION_PERCENTAGE_CHANGE);
@@ -109,12 +133,15 @@ public class StockWidgetRemoteViewsFactory implements RemoteViewsService.RemoteV
         views.setTextViewText(R.id.symbol, stockParcelable.getSymbol());
 
         views.setTextViewText(R.id.price, dollarFormat.format(price));
+        //views.setTextViewText(R.id.price,price);
+
 
         if (absoluteChange > 0) {
             views.setInt(R.id.change, "setBackgroundResource", R.drawable.percent_change_pill_green);
         } else {
             views.setInt(R.id.change, "setBackgroundResource", R.drawable.percent_change_pill_red);
         }
+
 
         String change = dollarFormatWithPlus.format(absoluteChange);
         String percentage = percentageFormat.format(percentageChange / 100);
@@ -126,13 +153,19 @@ public class StockWidgetRemoteViewsFactory implements RemoteViewsService.RemoteV
             views.setTextViewText(R.id.change,percentage);
         }
 
-
-
         /*
-        final Intent fillInIntent = new Intent();
-        fillInIntent.putExtra(getResources().getString(R.string.string_symbol), data.getString(data.getColumnIndex(QuoteColumns.SYMBOL)));
-        views.setOnClickFillInIntent(R.id.widget_list_item, fillInIntent);
+        Intent intent = new Intent(mContext, MainActivity.class);
+        intent.putExtra(mContext.getString(R.string.header_symbol), stockParcelable.getSymbol());
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
+        views.setOnClickPendingIntent(R.id.widget_list_item,pendingIntent);
         */
+
+
+        Intent intent = new Intent(mContext, MainActivity.class);
+        intent.putExtra(mContext.getString(R.string.header_symbol), stockParcelable.getSymbol());
+
+        views.setOnClickFillInIntent(R.id.widget_list_item, intent);
+
 
         return views;
     }

@@ -31,6 +31,10 @@ public class StockParcelable implements Parcelable {
     private String mDividend;
     private HashMap<String,String> mHistory;
 
+    private float mAbsoluteChangeInFloat = 0.0f;
+    private float mPercentageChangeInFloat = 0.0f;
+    private float mBidInFloat = 0.0f;
+
     public StockParcelable(Cursor cursor) {
         int symbolColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_SYMBOL);
         int absoluteChangeColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_ABSOLUTE_CHANGE);
@@ -100,6 +104,10 @@ public class StockParcelable implements Parcelable {
                 }
             }
         }
+
+        mAbsoluteChangeInFloat = cursor.getFloat(absoluteChangeColumn);
+        mPercentageChangeInFloat = cursor.getFloat(percentageChangeColumn);
+        mBidInFloat = cursor.getFloat(bidColumn);
     }
 
     protected StockParcelable(Parcel in) {
@@ -119,6 +127,9 @@ public class StockParcelable implements Parcelable {
         mEPS = in.readString();
         mDividend = in.readString();
         mHistory = in.readHashMap(Float.class.getClassLoader());
+        mAbsoluteChangeInFloat = in.readFloat();
+        mPercentageChangeInFloat = in.readFloat();
+        mBidInFloat = in.readFloat();
     }
 
     public String getSymbol() { return mSymbol; }
@@ -141,7 +152,9 @@ public class StockParcelable implements Parcelable {
     public String getEPS() { return mEPS; }
     public String getDividend() { return mDividend; }
     public HashMap<String,String> getHistory() { return mHistory; }
-
+    public float getAbsoluteChangeInFloat() { return mAbsoluteChangeInFloat; }
+    public float getPercentageChangeInFloat() { return mPercentageChangeInFloat; }
+    public float getBidInFloat() { return mBidInFloat; }
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mSymbol);
@@ -160,6 +173,10 @@ public class StockParcelable implements Parcelable {
         dest.writeString(mEPS);
         dest.writeString(mDividend);
         dest.writeMap(mHistory);
+
+        dest.writeFloat(mAbsoluteChangeInFloat);
+        dest.writeFloat(mPercentageChangeInFloat);
+        dest.writeFloat(mBidInFloat);
     }
 
     @Override

@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Timber.d("Main activity - oncreate");
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 

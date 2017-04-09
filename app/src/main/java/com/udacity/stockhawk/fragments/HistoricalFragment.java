@@ -59,13 +59,8 @@ public class HistoricalFragment extends Fragment {
                         Date date = new Date(Long.valueOf(pair.getKey().toString()).longValue());
                         float price = Float.valueOf(pair.getValue().toString()).floatValue();
 
-                        //chartXAxisLine.add(date.toString());
-
                         Entry stockData = new Entry(ix++, price);
                         values.add(stockData);
-
-                        //System.out.println(pair.getKey() + " = " + pair.getValue());
-                        //it.remove(); // avoids a ConcurrentModificationException
                     }
                     xAxisLineNumber++;
                     if(ix > 12)
@@ -74,7 +69,7 @@ public class HistoricalFragment extends Fragment {
             }
 
 
-            LineDataSet setStock = new LineDataSet(values, "Test this stock");
+            LineDataSet setStock = new LineDataSet(values, mStockParcelable.getSymbol());
 
             LineData data = new LineData(setStock);
 

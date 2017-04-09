@@ -24,9 +24,11 @@ public class TodayWidgetProvider extends AppWidgetProvider {
         for(int appWidgetId : appWidgetIds) {
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.stock_widget);
 
+            /*
             Intent intent = new Intent(context, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
             views.setOnClickPendingIntent(R.id.stock_widget_view, pendingIntent);
+            */
 
             views.setRemoteAdapter(R.id.stock_list_view, new Intent(context, StockWidgetRemoteViewsService.class));
 
@@ -36,7 +38,7 @@ public class TodayWidgetProvider extends AppWidgetProvider {
                     .addNextIntentWithParentStack(clickIntentTemplate)
                     .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
             views.setPendingIntentTemplate(R.id.stock_list_view, clickPendingIntentTemplate);
-            
+
             appWidgetManager.updateAppWidget(appWidgetId,views);
         }
 

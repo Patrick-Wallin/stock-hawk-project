@@ -57,10 +57,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     TextView error;
     private StockAdapter adapter;
 
+    private String symbolFromWidget = "";
+
     private SymbolValidatedBroadcastReceiver mySymbolValidatedBroadcastReceiver;
 
     @Override
     public void onClick(String symbol, Cursor cursor) {
+        symbolFromWidget = "";
         StockParcelable sp = new StockParcelable(cursor);
         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
         intent.putExtra("stock_information",sp);
@@ -71,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Timber.d("Main activity - oncreate");
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -106,6 +108,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         }).attachToRecyclerView(stockRecyclerView);
 
+        symbolFromWidget = "";
+        Intent intent = getIntent();
+        if(intent != null) {
+            if(intent.hasExtra(getString(R.string.header_symbol))) {
+                symbolFromWidget = intent.getStringExtra(getString(R.string.header_symbol));
+            }
+        }
 
     }
 
@@ -126,24 +135,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onRefresh() {
 
         QuoteSyncJob.syncImmediately(this,"");
-        Timber.d("onrefresh checking network");
         if (!networkUp() && adapter.getItemCount() == 0) {
-            Timber.d("second refresh");
             swipeRefreshLayout.setRefreshing(false);
             error.setText(getString(R.string.error_no_network));
             error.setVisibility(View.VISIBLE);
         } else if (!networkUp()) {
-            Timber.d("!networkUp - onrefresh");
             swipeRefreshLayout.setRefreshing(false);
             Toast.makeText(this, R.string.toast_no_connectivity, Toast.LENGTH_LONG).show();
         } else if (PrefUtils.getStocks(this).size() == 0) {
-            Timber.d("getsocks");
             swipeRefreshLayout.setRefreshing(false);
             error.setText(getString(R.string.error_no_stocks));
             error.setVisibility(View.VISIBLE);
         } else {
-            if(!networkUp())
-                Timber.d("it is down!");
             error.setVisibility(View.GONE);
         }
     }
@@ -165,16 +168,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 String message = getString(R.string.error_no_network_new_stock);
                 Toast.makeText(this,message,Toast.LENGTH_LONG).show();
             }
-            /*
-            if (networkUp()) {
-                swipeRefreshLayout.setRefreshing(true);
-            } else {
-                String message = getString(R.string.toast_stock_added_no_connectivity, symbol);
-                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-            }
-            PrefUtils.addStock(this, symbol);
-            QuoteSyncJob.syncImmediately(this,"");
-            */
         }
     }
 
@@ -193,6 +186,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             error.setVisibility(View.GONE);
         }
         adapter.setCursor(data);
+
+        if(data.getCount() != 0 && !symbolFromWidget.isEmpty()) {
+            onClick(symbolFromWidget, adapter.getCurrentCursorBasedOnSymbol(symbolFromWidget));
+        }
+
     }
 
 
@@ -239,7 +237,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Timber.d("onReceive!");
             boolean isSymbolValidated = intent.getBooleanExtra("symbolvalidated",false);
             String symbol = intent.getStringExtra("symbol");
             if(isSymbolValidated) {

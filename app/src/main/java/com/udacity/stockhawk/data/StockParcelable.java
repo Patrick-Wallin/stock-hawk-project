@@ -81,7 +81,8 @@ public class StockParcelable implements Parcelable {
             mAvgVolume = String.format("%d",cursor.getInt(avgVolumeColumn));
         if(marketCapColumn >= 0)
             mMarketCap = String.format("%.2f",cursor.getFloat(marketCapColumn));
-//        mPE = String.format("%.2f",cursor.getFloat(peColumn));
+        if(peColumn >= 0)
+            mPE = String.format("%.2f",cursor.getFloat(peColumn));
         if(epsColumn >= 0)
             mEPS = String.format("%.2f",cursor.getFloat(epsColumn));
         if(dividendColumn >= 0)

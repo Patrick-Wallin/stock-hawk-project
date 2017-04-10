@@ -8,27 +8,30 @@ import android.content.Intent;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.sync.QuoteIntentService;
 import com.udacity.stockhawk.sync.QuoteSyncJob;
 import com.udacity.stockhawk.ui.MainActivity;
 
+import timber.log.Timber;
+
 /**
  * Created by piwal on 3/5/2017.
  */
 
 public class TodayWidgetProvider extends AppWidgetProvider {
+    public static final String ACTION_DETAIL_ACTIVITY = "com.udacity.stockhawk.TodayWidgetProvider.LAUNCH_DETAIL_ACTIVITY";
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+    }
+
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for(int appWidgetId : appWidgetIds) {
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.stock_widget);
-
-            /*
-            Intent intent = new Intent(context, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-            views.setOnClickPendingIntent(R.id.stock_widget_view, pendingIntent);
-            */
 
             views.setRemoteAdapter(R.id.stock_list_view, new Intent(context, StockWidgetRemoteViewsService.class));
 

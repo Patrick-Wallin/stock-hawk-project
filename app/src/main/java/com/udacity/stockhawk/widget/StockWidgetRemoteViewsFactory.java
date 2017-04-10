@@ -102,38 +102,9 @@ public class StockWidgetRemoteViewsFactory implements RemoteViewsService.RemoteV
         absoluteChange = stockParcelable.getAbsoluteChangeInFloat();
         percentageChange = stockParcelable.getPercentageChangeInFloat();
 
-        //String price = stockParcelable.getBid();
-        //String absoluteChange = stockParcelable.getAbsoluteChange();
-        //String percentageChange = stockParcelable.getPercentageChange();
-
-
-        /*
-        try {
-            Number parsePrice = nf.parse(stockParcelable.getBid());
-            //price = Float.parseFloat(stockParcelable.getBid());
-            price = parsePrice.floatValue();
-        }catch(Exception e) {}
-
-        try {
-            Number parseAbsolutePrice = nf.parse(stockParcelable.getAbsoluteChange());
-            //absoluteChange = Float.parseFloat(stockParcelable.getAbsoluteChange());
-            absoluteChange = parseAbsolutePrice.floatValue();
-        }catch(Exception e) {}
-
-        try {
-            Number parsePercentageChange = nf.parse(stockParcelable.getPercentageChange());
-            //percentageChange = Float.parseFloat(stockParcelable.getPercentageChange());
-            percentageChange = parsePercentageChange.floatValue();
-        }catch(Exception e) {}
-        */
-
-        //float rawAbsoluteChange = cursor.getFloat(Contract.Quote.POSITION_ABSOLUTE_CHANGE);
-        //float percentageChange = cursor.getFloat(Contract.Quote.POSITION_PERCENTAGE_CHANGE);
-
         views.setTextViewText(R.id.symbol, stockParcelable.getSymbol());
 
         views.setTextViewText(R.id.price, dollarFormat.format(price));
-        //views.setTextViewText(R.id.price,price);
 
 
         if (absoluteChange > 0) {
@@ -153,18 +124,9 @@ public class StockWidgetRemoteViewsFactory implements RemoteViewsService.RemoteV
             views.setTextViewText(R.id.change,percentage);
         }
 
-        /*
-        Intent intent = new Intent(mContext, MainActivity.class);
+        Intent intent = new Intent();
         intent.putExtra(mContext.getString(R.string.header_symbol), stockParcelable.getSymbol());
-        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
-        views.setOnClickPendingIntent(R.id.widget_list_item,pendingIntent);
-        */
-
-
-        Intent intent = new Intent(mContext, MainActivity.class);
-        intent.putExtra(mContext.getString(R.string.header_symbol), stockParcelable.getSymbol());
-
-        views.setOnClickFillInIntent(R.id.widget_list_item, intent);
+        views.setOnClickFillInIntent(R.id.widget_row_item, intent);
 
 
         return views;

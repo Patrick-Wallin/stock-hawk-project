@@ -13,17 +13,11 @@ import android.view.ViewGroup;
 
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.adapters.SummaryAdapter;
-import com.udacity.stockhawk.data.StockInfo;
 import com.udacity.stockhawk.data.StockParcelable;
 
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
-import yahoofinance.Stock;
-import yahoofinance.YahooFinance;
-import yahoofinance.quotes.stock.StockQuote;
 
 /**
  * Created by piwal on 3/3/2017.

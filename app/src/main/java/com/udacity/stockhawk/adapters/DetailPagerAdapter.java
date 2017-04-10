@@ -8,10 +8,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.udacity.stockhawk.R;
-import com.udacity.stockhawk.data.StockInfo;
 import com.udacity.stockhawk.data.StockParcelable;
 import com.udacity.stockhawk.fragments.HistoricalFragment;
-import com.udacity.stockhawk.fragments.NewsFragment;
 import com.udacity.stockhawk.fragments.SummaryFragment;
 
 import java.util.ArrayList;
@@ -25,11 +23,12 @@ import yahoofinance.Stock;
 public class DetailPagerAdapter extends FragmentPagerAdapter {
     private Context mContext;
 
-    private final int[] MENUPAGER = {R.string.title_pager_summary,R.string.title_pager_historical,R.string.title_pager_news};
+    //private final int[] MENUPAGER = {R.string.title_pager_summary,R.string.title_pager_historical,R.string.title_pager_news};
+    private final int[] MENUPAGER = {R.string.title_pager_summary,R.string.title_pager_historical };
 
     private SummaryFragment summaryFragment;
     private HistoricalFragment historicalFragment;
-    private NewsFragment newsFragment;
+    //private NewsFragment newsFragment;
 
     private final Fragment[] fragments = new Fragment[MENUPAGER.length];
 
@@ -44,11 +43,14 @@ public class DetailPagerAdapter extends FragmentPagerAdapter {
         summaryFragment.setArguments(bundle);
         historicalFragment = new HistoricalFragment();
         historicalFragment.setArguments(bundle);
+        // Future development - news
+        /*
         newsFragment = new NewsFragment();
         newsFragment.setArguments(bundle);
+        */
         fragments[0] = summaryFragment;
         fragments[1] = historicalFragment;
-        fragments[2] = newsFragment;
+        //fragments[2] = newsFragment;
 
     }
 

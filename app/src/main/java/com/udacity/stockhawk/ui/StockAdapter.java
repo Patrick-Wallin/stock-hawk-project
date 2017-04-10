@@ -19,6 +19,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
 
@@ -45,6 +46,32 @@ class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
     void setCursor(Cursor cursor) {
         this.cursor = cursor;
         notifyDataSetChanged();
+    }
+
+    Cursor getCurrentCursorBasedOnSymbol(String symbol) {
+        int position = getPositionBasedOnSymbol(symbol);
+        if(position != -1)
+            cursor.moveToPosition(position);
+        return cursor;
+    }
+
+    int getPositionBasedOnSymbol(String symbol) {
+        int position = -1;
+
+        if(cursor != null) {
+            int currentPosition = cursor.getPosition();
+            for(int i = 0; i < cursor.getCount(); i++) {
+                if(cursor.moveToPosition(i)) {
+                    if(cursor.getString(Contract.Quote.POSITION_SYMBOL).equals(symbol)) {
+                        position = i;
+                        break;
+                    }
+                }
+            }
+            cursor.moveToPosition(currentPosition);
+        }
+
+        return position;
     }
 
     String getSymbolAtPosition(int position) {

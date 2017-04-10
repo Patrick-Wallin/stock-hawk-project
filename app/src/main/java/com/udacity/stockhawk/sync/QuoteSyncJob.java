@@ -60,8 +60,6 @@ public final class QuoteSyncJob {
 
     static void getQuotes(Context context) {
 
-        Timber.d("Running sync job");
-
         Calendar from = Calendar.getInstance();
         Calendar to = Calendar.getInstance();
         from.add(Calendar.YEAR, -YEARS_OF_HISTORY);
@@ -138,7 +136,6 @@ public final class QuoteSyncJob {
                     } catch (Exception e) {
                     }
 
-                    //Log.i("Bid",String.format("%.2f",bid));
                     try {
                         ask = quote.getAsk().floatValue();
                     } catch (Exception e) {
@@ -266,15 +263,8 @@ public final class QuoteSyncJob {
 
 
     public static synchronized void initialize(final Context context) {
-        //Timber.d("initialize");
-        //ConnectivityManager cm =
-        //        (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        //NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        //if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
-            Timber.d("get in!");
             schedulePeriodic(context);
             syncImmediately(context, "");
-        //}
     }
 
     public static synchronized void syncImmediately(Context context, String symbol) {
@@ -288,7 +278,6 @@ public final class QuoteSyncJob {
                 nowIntent.putExtra("symbol",symbol);
             context.startService(nowIntent);
         } else {
-            Timber.d("Jobbuilder");
             JobInfo.Builder builder = new JobInfo.Builder(ONE_OFF_ID, new ComponentName(context, QuoteJobService.class));
 
 

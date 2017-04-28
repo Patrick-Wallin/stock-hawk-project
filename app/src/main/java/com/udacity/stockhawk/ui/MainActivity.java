@@ -1,6 +1,8 @@
 package com.udacity.stockhawk.ui;
 
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -30,6 +32,7 @@ import com.udacity.stockhawk.data.PrefUtils;
 import com.udacity.stockhawk.data.StockParcelable;
 import com.udacity.stockhawk.sync.QuoteIntentService;
 import com.udacity.stockhawk.sync.QuoteSyncJob;
+import com.udacity.stockhawk.widget.TodayWidgetProvider;
 
 import java.io.IOException;
 import java.util.Map;
@@ -75,6 +78,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        System.setProperty("yahoofinance.baseurl.histquotes", "https://ichart.yahoo.com/table.csv");
+
         ButterKnife.bind(this);
 
         adapter = new StockAdapter(this, this);
@@ -105,6 +111,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 String symbol = adapter.getSymbolAtPosition(viewHolder.getAdapterPosition());
                 PrefUtils.removeStock(MainActivity.this, symbol);
                 getContentResolver().delete(Contract.Quote.makeUriForStock(symbol), null, null);
+
+                refreshWidget();
+
             }
         }).attachToRecyclerView(stockRecyclerView);
 
@@ -171,6 +180,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
+    public void refreshWidget() {
+        ComponentName name = new ComponentName(this, TodayWidgetProvider.class);
+        int [] ids = AppWidgetManager.getInstance(this).getAppWidgetIds(name);
+
+        Intent intent = new Intent(this,TodayWidgetProvider.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+        sendBroadcast(intent);
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(this,
@@ -191,6 +210,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             onClick(symbolFromWidget, adapter.getCurrentCursorBasedOnSymbol(symbolFromWidget));
         }
 
+        refreshWidget();
     }
 
 

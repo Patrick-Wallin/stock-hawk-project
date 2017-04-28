@@ -17,10 +17,12 @@ import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.StockParcelable;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -39,8 +41,13 @@ public class HistoricalFragment extends Fragment {
         if(args != null) {
             LineChart lineChart = (LineChart) rootView.findViewById(R.id.historical_line_chart);
             Description desc = new Description();
-            desc.setText("");
+
+            Locale locale = Locale.getDefault();
+            Currency currency = Currency.getInstance(locale);
+            String symbol = currency.getSymbol();
+            desc.setText(symbol);
             lineChart.setDescription(desc);
+
 
             List<Entry> values = new ArrayList<>();
 

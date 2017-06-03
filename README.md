@@ -17,7 +17,7 @@ I produced this app and taking them from a functional state to a production-read
 
 ## Screenshots
 
-![Screenshot](../master/screenshots/Stock-Hawk-Screenshot-1.png)
-![Screenshot](../master/screenshots/Stock-Hawk-Screenshot-2.png)
-![Screenshot](../master/screenshots/Stock-Hawk-Screenshot-3.png)
-![Screenshot](../master/screenshots/Stock-Hawk-Screenshot-4.png)
+![Screenshot](../master/screenshots/Stock-Hawk-Screenshot-1.PNG)
+![Screenshot](../master/screenshots/Stock-Hawk-Screenshot-2.PNG)
+![Screenshot](../master/screenshots/Stock-Hawk-Screenshot-3.PNG)
+![Screenshot](../master/screenshots/Stock-Hawk-Screenshot-4.PNG)

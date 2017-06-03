@@ -47,7 +47,9 @@ public final class QuoteSyncJob {
         Stock stock = null;
         try {
             stock = YahooFinance.get(symbol);
-            isValidated = (stock.getName() != null);
+            if(stock != null) {
+                isValidated = (stock.getName() != null);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -85,149 +87,151 @@ public final class QuoteSyncJob {
                 String symbol = iterator.next();
 
                 Stock stock = quotes.get(symbol);
-                StockQuote quote = stock.getQuote();
+                if(stock != null) {
+                    StockQuote quote = stock.getQuote();
 
-                if(stock.getName() != null) {
-                    float price = 0.0f;
-                    float change = 0.0f;
-                    float percentChange = 0.0f;
-                    float previousClose = 0.0f;
-                    float open = 0.0f;
-                    float bid = 0.0f;
-                    float ask = 0.0f;
-                    float daylow = 0.0f;
-                    float dayhigh = 0.0f;
-                    float yearlow = 0.0f;
-                    float yearhigh = 0.0f;
-                    float marketCap = 0.0f;
-                    float pe = 0.0f;
-                    float eps = 0.0f;
-                    float dividend = 0.0f;
-                    long volume = 0l;
-                    long avgVolume = 0l;
+                    if (stock.getName() != null) {
+                        float price = 0.0f;
+                        float change = 0.0f;
+                        float percentChange = 0.0f;
+                        float previousClose = 0.0f;
+                        float open = 0.0f;
+                        float bid = 0.0f;
+                        float ask = 0.0f;
+                        float daylow = 0.0f;
+                        float dayhigh = 0.0f;
+                        float yearlow = 0.0f;
+                        float yearhigh = 0.0f;
+                        float marketCap = 0.0f;
+                        float pe = 0.0f;
+                        float eps = 0.0f;
+                        float dividend = 0.0f;
+                        long volume = 0l;
+                        long avgVolume = 0l;
 
-                    try {
-                        price = quote.getPrice().floatValue();
-                    } catch (Exception e) {
+                        try {
+                            price = quote.getPrice().floatValue();
+                        } catch (Exception e) {
+                        }
+
+                        try {
+                            change = quote.getChange().floatValue();
+                        } catch (Exception e) {
+                        }
+
+                        try {
+                            percentChange = quote.getChangeInPercent().floatValue();
+                        } catch (Exception e) {
+                        }
+
+                        try {
+                            previousClose = quote.getPreviousClose().floatValue();
+                        } catch (Exception e) {
+                        }
+
+                        try {
+                            open = quote.getOpen().floatValue();
+                        } catch (Exception e) {
+                        }
+
+                        try {
+                            bid = quote.getBid().floatValue();
+                        } catch (Exception e) {
+                        }
+
+                        try {
+                            ask = quote.getAsk().floatValue();
+                        } catch (Exception e) {
+                        }
+
+                        try {
+                            daylow = quote.getDayLow().floatValue();
+                        } catch (Exception e) {
+                        }
+
+                        try {
+                            dayhigh = quote.getDayHigh().floatValue();
+                        } catch (Exception e) {
+                        }
+
+                        try {
+                            yearlow = quote.getYearLow().floatValue();
+                        } catch (Exception e) {
+                        }
+
+                        try {
+                            yearhigh = quote.getYearHigh().floatValue();
+                        } catch (Exception e) {
+                        }
+
+                        try {
+                            volume = quote.getVolume();
+                        } catch (Exception e) {
+                        }
+
+                        try {
+                            avgVolume = quote.getAvgVolume();
+                        } catch (Exception e) {
+                        }
+
+                        try {
+                            marketCap = stock.getStats().getMarketCap().floatValue();
+                        } catch (Exception e) {
+                        }
+
+                        try {
+                            pe = stock.getStats().getShortRatio().floatValue();
+                        } catch (Exception e) {
+                        }
+
+                        try {
+                            eps = stock.getStats().getEps().floatValue();
+                        } catch (Exception e) {
+                        }
+
+                        try {
+                            dividend = stock.getDividend().getAnnualYield().floatValue();
+                        } catch (Exception e) {
+                        }
+
+
+                        // WARNING! Don't request historical data for a stock that doesn't exist!
+                        // The request will hang forever X_x
+                        List<HistoricalQuote> history = stock.getHistory(from, to, Interval.WEEKLY);
+
+                        StringBuilder historyBuilder = new StringBuilder();
+
+                        for (HistoricalQuote it : history) {
+                            historyBuilder.append(it.getDate().getTimeInMillis());
+                            historyBuilder.append(", ");
+                            historyBuilder.append(it.getClose());
+                            historyBuilder.append("\n");
+                        }
+
+                        ContentValues quoteCV = new ContentValues();
+                        quoteCV.put(Contract.Quote.COLUMN_SYMBOL, symbol);
+                        quoteCV.put(Contract.Quote.COLUMN_PRICE, price);
+                        quoteCV.put(Contract.Quote.COLUMN_PERCENTAGE_CHANGE, percentChange);
+                        quoteCV.put(Contract.Quote.COLUMN_ABSOLUTE_CHANGE, change);
+                        quoteCV.put(Contract.Quote.COLUMN_HISTORY, historyBuilder.toString());
+
+                        quoteCV.put(Contract.Quote.COLUMN_PREVIOUS_CLOSE, previousClose);
+                        quoteCV.put(Contract.Quote.COLUMN_OPEN, open);
+                        quoteCV.put(Contract.Quote.COLUMN_BID, bid);
+                        quoteCV.put(Contract.Quote.COLUMN_ASK, ask);
+                        quoteCV.put(Contract.Quote.COLUMN_DAY_LOW, daylow);
+                        quoteCV.put(Contract.Quote.COLUMN_DAY_HIGH, dayhigh);
+                        quoteCV.put(Contract.Quote.COLUMN_YEAR_LOW, yearlow);
+                        quoteCV.put(Contract.Quote.COLUMN_YEAR_HIGH, yearhigh);
+                        quoteCV.put(Contract.Quote.COLUMN_VOLUME, volume);
+                        quoteCV.put(Contract.Quote.COLUMN_AVG_VOLUME, avgVolume);
+                        quoteCV.put(Contract.Quote.COLUMN_MARKET_CAP, marketCap);
+                        quoteCV.put(Contract.Quote.COLUMN_PE, pe);
+                        quoteCV.put(Contract.Quote.COLUMN_EPS, eps);
+                        quoteCV.put(Contract.Quote.COLUMN_DIVIDEND, dividend);
+
+                        quoteCVs.add(quoteCV);
                     }
-
-                    try {
-                        change = quote.getChange().floatValue();
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        percentChange = quote.getChangeInPercent().floatValue();
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        previousClose = quote.getPreviousClose().floatValue();
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        open = quote.getOpen().floatValue();
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        bid = quote.getBid().floatValue();
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        ask = quote.getAsk().floatValue();
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        daylow = quote.getDayLow().floatValue();
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        dayhigh = quote.getDayHigh().floatValue();
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        yearlow = quote.getYearLow().floatValue();
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        yearhigh = quote.getYearHigh().floatValue();
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        volume = quote.getVolume();
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        avgVolume = quote.getAvgVolume();
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        marketCap = stock.getStats().getMarketCap().floatValue();
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        pe = stock.getStats().getShortRatio().floatValue();
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        eps = stock.getStats().getEps().floatValue();
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        dividend = stock.getDividend().getAnnualYield().floatValue();
-                    } catch (Exception e) {
-                    }
-
-
-                    // WARNING! Don't request historical data for a stock that doesn't exist!
-                    // The request will hang forever X_x
-                    List<HistoricalQuote> history = stock.getHistory(from, to, Interval.WEEKLY);
-
-                    StringBuilder historyBuilder = new StringBuilder();
-
-                    for (HistoricalQuote it : history) {
-                        historyBuilder.append(it.getDate().getTimeInMillis());
-                        historyBuilder.append(", ");
-                        historyBuilder.append(it.getClose());
-                        historyBuilder.append("\n");
-                    }
-
-                    ContentValues quoteCV = new ContentValues();
-                    quoteCV.put(Contract.Quote.COLUMN_SYMBOL, symbol);
-                    quoteCV.put(Contract.Quote.COLUMN_PRICE, price);
-                    quoteCV.put(Contract.Quote.COLUMN_PERCENTAGE_CHANGE, percentChange);
-                    quoteCV.put(Contract.Quote.COLUMN_ABSOLUTE_CHANGE, change);
-                    quoteCV.put(Contract.Quote.COLUMN_HISTORY, historyBuilder.toString());
-
-                    quoteCV.put(Contract.Quote.COLUMN_PREVIOUS_CLOSE, previousClose);
-                    quoteCV.put(Contract.Quote.COLUMN_OPEN, open);
-                    quoteCV.put(Contract.Quote.COLUMN_BID, bid);
-                    quoteCV.put(Contract.Quote.COLUMN_ASK, ask);
-                    quoteCV.put(Contract.Quote.COLUMN_DAY_LOW, daylow);
-                    quoteCV.put(Contract.Quote.COLUMN_DAY_HIGH, dayhigh);
-                    quoteCV.put(Contract.Quote.COLUMN_YEAR_LOW, yearlow);
-                    quoteCV.put(Contract.Quote.COLUMN_YEAR_HIGH, yearhigh);
-                    quoteCV.put(Contract.Quote.COLUMN_VOLUME, volume);
-                    quoteCV.put(Contract.Quote.COLUMN_AVG_VOLUME, avgVolume);
-                    quoteCV.put(Contract.Quote.COLUMN_MARKET_CAP, marketCap);
-                    quoteCV.put(Contract.Quote.COLUMN_PE, pe);
-                    quoteCV.put(Contract.Quote.COLUMN_EPS, eps);
-                    quoteCV.put(Contract.Quote.COLUMN_DIVIDEND, dividend);
-
-                    quoteCVs.add(quoteCV);
                 }
             }
 
